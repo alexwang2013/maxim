@@ -1,12 +1,24 @@
 FROM openjdk:8u151-jdk-alpine3.7
 
 ENV GATLING_VERSION 3.5.1
+ENV KUBECTL_VERSION v1.20.0
 
 RUN mkdir /workdir && cd /workdir
 WORKDIR /workdir
 
+
+
+# install awscli
+RUN apk add --no-cache \
+        python3 \
+        py3-pip \
+    && pip3 install --upgrade pip \
+    && pip3 install \
+        awscli \
+    && rm -rf /var/cache/apk/*
+
 # install kubectl
-RUN wget -O kubectl  https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl && \
+RUN wget -O kubectl https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && \
     chmod a+x ./kubectl  &&  \
     mv ./kubectl /usr/local/bin/kubectl
 

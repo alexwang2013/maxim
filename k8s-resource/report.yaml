@@ -14,20 +14,21 @@ spec:
     spec:
       serviceAccountName: perf-test-sa
       initContainers:
-      - image: gatling:3.5.1
+      - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
         name: poll-job-results
         command: ["/scripts/script.sh"]
         volumeMounts:
         - name: script
           mountPath: /scripts
       containers:
-      - image: gatling:3.5.1
-        imagePullPolicy: Never
+      - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
+        imagePullPolicy: IfNotPresent
         name: merge-perf-test-results
-        args:
-        - tail
-        - -f
-        - /dev/null
+        command: ["/bin/sh", "-c"]
+        args: ["sh /scripts/start.sh"]
+        volumeMounts:
+        - name: script
+          mountPath: /scripts
         resources:
           limits:
             cpu: 500m
@@ -56,3 +57,15 @@ data:
       echo .
       sleep 10;
     done
+
+  start.sh: |
+    BUCKET_NAME="perf-test-aws"
+    SCENARIO_NAME="TEST"
+    mkdir -p $SCENARIO_NAME
+    cd $SCENARIO_NAME
+    aws s3 cp s3://$BUCKET_NAME/$SCENARIO_NAME ./ --recursive
+    gatling -ro $(pwd)
+    rm *.log
+    cd ../
+    tar -zcvf report.tar.gz ./$SCENARIO_NAME
+    aws s3 cp report.tar.gz s3://$BUCKET_NAME/$SCENARIO_NAME/report.tar.gz

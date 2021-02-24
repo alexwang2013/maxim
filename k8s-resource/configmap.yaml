@@ -4,10 +4,12 @@ metadata:
   name: bin-cm
 data:
   start.sh: |
+    BUCKET_NAME="perf-test-aws"
+    SCENARIO_NAME="TEST"
     mkdir -p /workdir/simulation-real
     cp /workdir/simulation/*.scala /workdir/simulation-real/
     gatling -sf /workdir/simulation-real -rf /workdir/results -rd test -nr
-    # aws s3 cp /workdir/results/*/*.log 
+    aws s3 cp /workdir/results/*/*.log s3://$BUCKET_NAME/$SCENARIO_NAME/$HOSTNAME.log
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -1,14 +1,42 @@
-= hello
+= alligator
 
-test case
-
-load test
-
-report
-
-s3
-
-
-
-
+== Docker Image
+```
 docker build . -t gatling:3.5.1
+```
+
+
+https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
+
+
+== Service Account
+
+```
+eksctl utils associate-iam-oidc-provider --cluster basic-cluster --approve
+
+
+eksctl create iamserviceaccount \
+    --name perf-test-sa \
+    --namespace default \
+    --cluster basic-cluster \
+    --region us-east-1 \
+    --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess \
+    --approve \
+    --override-existing-serviceaccounts
+```
+
+
+== Start Pod on Fargate
+
+```
+kubectl apply -f k8s-resource/
+```
+
+
+
+== Result
+
+```
+aws s3 cp s3://perf-test-aws/TEST/report.tar.gz ./
+tar -zxvf report.tar.gz
+```

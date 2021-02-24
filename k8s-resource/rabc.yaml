@@ -1,9 +1,9 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: perf-test-sa
-  # namespace: perf-test
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: perf-test-sa
+#   # namespace: perf-test
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
