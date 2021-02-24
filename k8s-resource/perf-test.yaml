@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perf-test
+spec:
+  backoffLimit: 1
+  parallelism: 1
+  completions: 1
+  template:
+    metadata:
+      labels:
+        name: perf-test
+    spec:
+      containers:
+      - image: gatling:3.5.1
+        imagePullPolicy: Never
+        name: perf-test
+        command: ["/bin/sh", "-c"]
+        args: ["sh /workdir/bin/start.sh"]
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 15000Mi
+          requests:
+            cpu: 1500m
+            memory: 1500Mi
+        volumeMounts:
+        - name: simulation-vol
+          mountPath: /workdir/simulation
+        - name: bin-vol
+          mountPath: /workdir/bin
+      restartPolicy: Never
+      volumes:
+        - name: simulation-vol
+          configMap: 
+            name: simulation-cm
+        - name: bin-vol
+          configMap: 
+            name: bin-cm

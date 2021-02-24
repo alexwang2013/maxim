@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: merge-perf-test-results
+  # namespace: perf-test
+spec:
+  backoffLimit: 1
+  parallelism: 1
+  completions: 1
+  template:
+    metadata:
+      labels:
+        name: merge-perf-test-results
+    spec:
+      serviceAccountName: perf-test-sa
+      initContainers:
+      - image: gatling:3.5.1
+        name: poll-job-results
+        command: ["/scripts/script.sh"]
+        volumeMounts:
+        - name: script
+          mountPath: /scripts
+      containers:
+      - image: gatling:3.5.1
+        imagePullPolicy: Never
+        name: merge-perf-test-results
+        args:
+        - tail
+        - -f
+        - /dev/null
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+      volumes:
+      - name: script
+        configMap:
+          name: poll-script
+          defaultMode: 0744
+      restartPolicy: Never
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: poll-script
+  # namespace: perf-test
+data:
+  script.sh: |
+    #!/bin/sh
+    # until [ $(kubectl get job perf-test -n perf-test -o=jsonpath='{.status.conditions[0].type}') = "Complete" ];
+    until [ $(kubectl get job perf-test -o=jsonpath='{.status.conditions[0].type}') = "Complete" ];
+    do
+      echo .
+      sleep 10;
+    done

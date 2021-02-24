@@ -1,0 +1,14 @@
+= hello
+
+test case
+
+load test
+
+report
+
+s3
+
+
+
+
+docker build . -t gatling:3.5.1

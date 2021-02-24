@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: perf-test-sa
+  # namespace: perf-test
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: perf-test-role
+  # namespace: perf-test
+rules:
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: perf-test-rb
+  # namespace: perf-test
+subjects:
+  - kind: ServiceAccount
+    name: perf-test-sa
+    # namespace: perf-test
+roleRef:
+  kind: Role
+  name: perf-test-role
+  apiGroup: rbac.authorization.k8s.io
