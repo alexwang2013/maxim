@@ -4,10 +4,22 @@ metadata:
   name: bin-cm
 data:
   start.sh: |
+    START_TIME="{{ .Values.START_TIME }}"
     BUCKET_NAME="perf-test-aws"
     SCENARIO_NAME="TEST"
     mkdir -p /workdir/simulation-real
     cp /workdir/simulation/*.scala /workdir/simulation-real/
+
+    # wait to start gatling
+    start_time_stamp=$(date -d "$START_TIME" +"%s")
+    current_time_stamp=$(date +"%s")
+    echo "wait until $START_TIME"
+    until [ $current_time_stamp -ge $start_time_stamp ];
+    do
+      current_time_stamp=$(date +"%s")
+      sleep 1;
+    done
+    
     gatling -sf /workdir/simulation-real -rf /workdir/results -rd test -nr
     aws s3 cp /workdir/results/*/*.log s3://$BUCKET_NAME/$SCENARIO_NAME/$HOSTNAME.log
 ---
@@ -76,5 +88,8 @@ data:
             .formParam("company", "37")
         )
 
-      setUp(scn.inject(atOnceUsers(1)).protocols(httpProtocol))
+      setUp(scn.inject(
+        // atOnceUsers(1)
+        constantUsersPerSec({{ .Values.usersPerSecPerGatling }}).during({{ .Values.duration }}.seconds)
+      ).protocols(httpProtocol))
     }

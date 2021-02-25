@@ -1,0 +1,9 @@
+apiVersion: v2
+name: maxim
+description: Cluster of Gatling for load test
+
+type: application
+
+version: 3.5.1
+
+appVersion: 3.5.1

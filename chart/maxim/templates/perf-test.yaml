@@ -3,9 +3,9 @@ kind: Job
 metadata:
   name: perf-test
 spec:
-  backoffLimit: 1
-  parallelism: 1
-  completions: 1
+  backoffLimit: {{ .Values.gatlingCount }}
+  parallelism: {{ .Values.gatlingCount }}
+  completions: {{ .Values.gatlingCount }}
   template:
     metadata:
       labels:
@@ -13,18 +13,14 @@ spec:
     spec:
       serviceAccountName: perf-test-sa
       containers:
-      - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
-        imagePullPolicy: IfNotPresent
+      # - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.imagePullPolicy }}
         name: perf-test
         command: ["/bin/sh", "-c"]
         args: ["sh /workdir/bin/start.sh"]
         resources:
-          limits:
-            cpu: 1500m
-            memory: 15000Mi
-          requests:
-            cpu: 1500m
-            memory: 1500Mi
+          {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:
         - name: simulation-vol
           mountPath: /workdir/simulation

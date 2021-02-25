@@ -14,15 +14,15 @@ spec:
     spec:
       serviceAccountName: perf-test-sa
       initContainers:
-      - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         name: poll-job-results
         command: ["/scripts/script.sh"]
         volumeMounts:
         - name: script
           mountPath: /scripts
       containers:
-      - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
-        imagePullPolicy: IfNotPresent
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.imagePullPolicy }}
         name: merge-perf-test-results
         command: ["/bin/sh", "-c"]
         args: ["sh /scripts/start.sh"]
@@ -31,11 +31,11 @@ spec:
           mountPath: /scripts
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 1000m
+            memory: 2000Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 1000m
+            memory: 2000Mi
       volumes:
       - name: script
         configMap:

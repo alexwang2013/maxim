@@ -29,7 +29,8 @@ eksctl create iamserviceaccount \
 == Start Pod on Fargate
 
 ```
-kubectl apply -f k8s-resource/
+cd chart
+helm install maxim maxim/
 ```
 
 
