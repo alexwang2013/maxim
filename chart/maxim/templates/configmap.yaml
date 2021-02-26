@@ -2,11 +2,12 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: bin-cm
+  namespace: {{ .Release.Namespace }}
 data:
   start.sh: |
-    START_TIME="{{ .Values.START_TIME }}"
-    BUCKET_NAME="perf-test-aws"
-    SCENARIO_NAME="TEST"
+    START_TIME="{{ .Values.startTime }}"
+    BUCKET_URL="{{ .Values.bucketUrl }}"
+    SCENARIO_NAME="{{ .Values.scenarioName }}"
     mkdir -p /workdir/simulation-real
     cp /workdir/simulation/*.scala /workdir/simulation-real/
 
@@ -21,12 +22,13 @@ data:
     done
     
     gatling -sf /workdir/simulation-real -rf /workdir/results -rd test -nr
-    aws s3 cp /workdir/results/*/*.log s3://$BUCKET_NAME/$SCENARIO_NAME/$HOSTNAME.log
+    aws s3 cp /workdir/results/*/*.log $BUCKET_URL/$SCENARIO_NAME/$HOSTNAME.log
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: simulation-cm
+  namespace: {{ .Release.Namespace }}
 data:
   BasicSimulation.scala: |
     /*

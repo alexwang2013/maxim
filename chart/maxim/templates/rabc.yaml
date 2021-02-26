@@ -9,7 +9,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: perf-test-role
-  # namespace: perf-test
+  namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
   - batch
@@ -22,11 +22,11 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: perf-test-rb
-  # namespace: perf-test
+  namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
     name: perf-test-sa
-    # namespace: perf-test
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
   name: perf-test-role

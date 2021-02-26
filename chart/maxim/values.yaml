@@ -1,7 +1,4 @@
-gatlingCount: 1
-usersPerSecPerGatling: 5
-duration: 60
-START_TIME: "2021-02-25 17:06:17 +0900"
+
 image:
   repository: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling
   tag: 3.5.1
@@ -13,3 +10,10 @@ resources:
   requests:
     cpu: 2000m
     memory: 8000Mi
+startTime: "2021-02-25 17:06:17 +0900"
+gatlingCount: 1
+usersPerSecPerGatling: 5
+duration: 60
+serviceAccount: perf-test-sa
+bucketUrl: "s3://perf-test-aws"
+scenarioName: "TEST"

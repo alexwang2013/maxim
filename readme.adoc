@@ -1,3 +1,5 @@
+:imagesdir: images
+
 = alligator
 
 == Docker Image
@@ -9,18 +11,40 @@ docker build . -t gatling:3.5.1
 https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
 
 
+== EKS
+
+create eks cluster and fargate profile
+
+```
+cd eks
+eksctl create cluster -f cluster.yaml
+eksctl create fargateprofile -f fargate_profile.yaml
+```
+
+== Namesapce
+
+```
+kubectl create namespace maxim
+```
+
 == Service Account
 
 ```
-eksctl utils associate-iam-oidc-provider --cluster basic-cluster --approve
+REGION=us-east-1
+CLUSTER_NAME=basic-cluster
+NAMESPACE=maxim
+SERVICE_ACCOUNT=perf-test-sa
+S3_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+eksctl utils associate-iam-oidc-provider --cluster $CLUSTER_NAME --region $REGION --approve
 
 
 eksctl create iamserviceaccount \
-    --name perf-test-sa \
-    --namespace default \
-    --cluster basic-cluster \
-    --region us-east-1 \
-    --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess \
+    --name $SERVICE_ACCOUNT \
+    --namespace $NAMESPACE \
+    --cluster $CLUSTER_NAME \
+    --region $REGION \
+    --attach-policy-arn $S3_POLICY \
     --approve \
     --override-existing-serviceaccounts
 ```
@@ -30,14 +54,50 @@ eksctl create iamserviceaccount \
 
 ```
 cd chart
-helm install maxim maxim/
+helm install maxim maxim/ -n maxim
+```
+
+== Check jobs
+
+```
+kubectl get all -n maxim
+```
+
+the pods are starting
+
+```
+NAME                                COMPLETIONS   DURATION   AGE
+job.batch/perf-test                 0/1                      16s
+job.batch/perf-test-merge-results   0/1                      16s
 ```
 
 
+after about 5 minutes, the job completed
+```
+NAME                                READY   STATUS      RESTARTS   AGE
+pod/perf-test-merge-results-x54mf   0/1     Completed   0          4m25s
+pod/perf-test-wvjqn                 0/1     Completed   0          4m25s
+
+NAME                                COMPLETIONS   DURATION   AGE
+job.batch/perf-test                 1/1           3m33s      4m28s
+job.batch/perf-test-merge-results   1/1           4m23s      4m28s
+```
 
 == Result
 
 ```
 aws s3 cp s3://perf-test-aws/TEST/report.tar.gz ./
 tar -zxvf report.tar.gz
+```
+
+then open index.html
+
+image::gatling_ret.png[width=100%, scalewidth=17cm] 
+
+
+== Clean up
+
+```
+cd chart
+helm uninstall maxim -n maxim
 ```

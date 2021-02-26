@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: perf-test
+  namespace: {{ .Release.Namespace }}
 spec:
   backoffLimit: {{ .Values.gatlingCount }}
   parallelism: {{ .Values.gatlingCount }}
@@ -11,7 +12,7 @@ spec:
       labels:
         name: perf-test
     spec:
-      serviceAccountName: perf-test-sa
+      serviceAccountName: {{ .Values.serviceAccount }}
       containers:
       # - image: 072628578609.dkr.ecr.us-east-1.amazonaws.com/gatling:3.5.1
       - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
