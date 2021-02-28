@@ -29,6 +29,9 @@ spec:
         volumeMounts:
         - name: script
           mountPath: /scripts
+        - name: gatling-vol
+          mountPath: /workdir/gatling/conf/gatling.conf
+          subPath: gatling.conf
         resources:
           limits:
             cpu: 1000m
@@ -37,10 +40,13 @@ spec:
             cpu: 1000m
             memory: 2000Mi
       volumes:
-      - name: script
-        configMap:
-          name: poll-script
-          defaultMode: 0744
+        - name: script
+          configMap:
+            name: poll-script
+            defaultMode: 0744
+        - name: gatling-vol
+          configMap:
+            name: gatling-cm
       restartPolicy: Never
 ---
 apiVersion: v1

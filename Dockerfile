@@ -28,6 +28,7 @@ RUN set -o errexit -o nounset && \
 	wget -O gatling.zip "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/$GATLING_VERSION/gatling-charts-highcharts-bundle-$GATLING_VERSION-bundle.zip" && \
 	echo "Installing gatling" && \
 	unzip gatling.zip && \
+    mv gatling-charts-highcharts-bundle-$GATLING_VERSION gatling && \
 	rm gatling.zip
-ENV GATLING_HOME=/workdir/gatling-charts-highcharts-bundle-$GATLING_VERSION
-RUN ln -s /workdir/gatling-charts-highcharts-bundle-$GATLING_VERSION/bin/gatling.sh /usr/local/bin/gatling && chmod a+x /usr/local/bin/gatling
+ENV GATLING_HOME=/workdir/gatling
+RUN ln -s /workdir/gatling/bin/gatling.sh /usr/local/bin/gatling && chmod a+x /usr/local/bin/gatling

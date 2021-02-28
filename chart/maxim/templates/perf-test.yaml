@@ -23,12 +23,18 @@ spec:
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:
+        - name: gatling-vol
+          mountPath: /workdir/gatling/conf/gatling.conf
+          subPath: gatling.conf
         - name: simulation-vol
           mountPath: /workdir/simulation
         - name: bin-vol
           mountPath: /workdir/bin
       restartPolicy: Never
       volumes:
+        - name: gatling-vol
+          configMap:
+            name: gatling-cm
         - name: simulation-vol
           configMap: 
             name: simulation-cm
