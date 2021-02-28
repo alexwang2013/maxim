@@ -1,15 +1,17 @@
 :imagesdir: images
 
-= alligator
+= maxim
+
+== About maxim
+
+maxim is adeveloper tool to load test your web applications.
+
+It uses gatling and EKS to simulate 10k+ concurrent requests for your load test.
 
 == Docker Image
 ```
 docker build . -t gatling:3.5.1
 ```
-
-
-https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
-
 
 == EKS
 
