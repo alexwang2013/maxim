@@ -1,0 +1,9 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: basic-cluster
+  region: us-east-1
+fargateProfiles:
+  - name: others
+    selectors:
+      - namespace: cert-manager

@@ -1,0 +1,48 @@
+:imagesdir: images
+
+= sample
+
+== Docker Image
+```
+docker build . -t helloworld-go
+docker push alexwang2020/helloworld-go
+```
+
+== deploy
+```
+kubectl apply -f k8s-res
+```
+
+check the deployment
+```
+kubectl get all
+```
+
+the output is:
+```
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/helloworld-deployment-6f87b698d-7cwsh   1/1     Running   0          74s
+
+NAME                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/helloworld-service   ClusterIP   10.100.183.55   <none>        8080/TCP   76s
+service/kubernetes           ClusterIP   10.100.0.1      <none>        443/TCP    91m
+
+NAME                                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/helloworld-deployment   1/1     1            1           76s
+
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/helloworld-deployment-6f87b698d   1         1         1       76s
+```
+
+== install alb 
+
+to install ald load balancer, please refer to the following
+
+https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html[aws-load-balancer-controller]
+
+
+== install ingress
+```
+kubectl install aws-alb/ingress.yaml
+```
+
