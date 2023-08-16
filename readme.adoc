@@ -4,9 +4,9 @@
 
 == About maxim
 
-maxim is adeveloper tool to load test your web applications.
+maxim is a tool to do performance test for your web applications.
 
-It uses gatling and EKS to simulate 10k+ concurrent requests for your load test.
+It can simulate 10k+ concurrent requests for your performance test by using Gatling and EKS.
 
 == Docker Image
 ```
